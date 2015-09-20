@@ -48,7 +48,7 @@ public class GitlabToGithubConverter {
 
 		Commit commit = new Commit();
 		commit.setMessage(glcommit.getTitle());
-
+		
 		CommitUser commitUser = new CommitUser();
 		commitUser.setName(glcommit.getAuthorName());
 		commitUser.setEmail(glcommit.getAuthorEmail());
