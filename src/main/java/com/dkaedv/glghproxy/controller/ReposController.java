@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.catalina.connector.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.egit.github.core.Comment;
@@ -11,6 +12,7 @@ import org.eclipse.egit.github.core.Commit;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.RepositoryBranch;
 import org.eclipse.egit.github.core.RepositoryCommit;
+import org.eclipse.egit.github.core.RepositoryHook;
 import org.eclipse.egit.github.core.event.Event;
 import org.gitlab.api.GitlabAPI;
 import org.gitlab.api.models.GitlabBranch;
@@ -19,15 +21,23 @@ import org.gitlab.api.models.GitlabCommitDiff;
 import org.gitlab.api.models.GitlabMergeRequest;
 import org.gitlab.api.models.GitlabNote;
 import org.gitlab.api.models.GitlabProject;
+import org.gitlab.api.models.GitlabProjectHook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.dkaedv.glghproxy.converter.GitlabToGithubConverter;
+import com.dkaedv.glghproxy.githubentity.HookRequest;
 import com.dkaedv.glghproxy.gitlabclient.GitlabSessionProvider;
 
 @Controller
@@ -154,4 +164,58 @@ public class ReposController {
 		return new Vector<Comment>();
 	}
 
+	@RequestMapping(value = "/{namespace}/{repo}/hooks", method = RequestMethod.GET)
+	@ResponseBody
+	public List<RepositoryHook> getHooks(
+			@PathVariable String namespace,
+			@PathVariable String repo,
+			@RequestParam("access_token") String authorization
+			) throws IOException {
+
+		GitlabAPI api = gitlab.connect(authorization);
+		List<GitlabProjectHook> hooks = api.getProjectHooks(namespace + "/" + repo);
+		
+		return GitlabToGithubConverter.convertHooks(hooks);
+	}
+
+	@RequestMapping(value = "/{namespace}/{repo}/hooks", method = RequestMethod.POST)
+	@ResponseBody
+	@ResponseStatus(value = HttpStatus.CREATED)
+	public RepositoryHook addHook(
+			@PathVariable String namespace,
+			@PathVariable String repo,
+			@RequestParam("access_token") String authorization,
+			@RequestBody HookRequest hook
+			) throws IOException {
+
+		GitlabAPI api = gitlab.connect(authorization);
+		GitlabProjectHook createdHook = api.addProjectHook(
+				namespace + "/" + repo,
+				hook.getConfig().get("url"), 
+				hook.getEvents().contains("push"), 
+				false,
+				hook.getEvents().contains("pull_request"));
+		
+		return GitlabToGithubConverter.convertHook(createdHook);
+	}
+
+	@RequestMapping(value = "/{namespace}/{repo}/hooks/{hookId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteHook(
+			@PathVariable String namespace,
+			@PathVariable String repo,
+			@PathVariable String hookId,
+			@RequestParam("access_token") String authorization
+			) throws IOException {
+
+		GitlabAPI api = gitlab.connect(authorization);
+		GitlabProject project = api.getProject(namespace + "/" + repo);
+		api.deleteProjectHook(project, hookId);
+	}
+
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public void handle(HttpMessageNotReadableException e) {
+	    LOG.warn("Returning HTTP 400 Bad Request", e);
+	}
 }

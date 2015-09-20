@@ -1,5 +1,6 @@
 package com.dkaedv.glghproxy.converter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -14,6 +15,7 @@ import org.eclipse.egit.github.core.PullRequestMarker;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryBranch;
 import org.eclipse.egit.github.core.RepositoryCommit;
+import org.eclipse.egit.github.core.RepositoryHook;
 import org.eclipse.egit.github.core.TypedResource;
 import org.eclipse.egit.github.core.User;
 import org.gitlab.api.models.GitlabBranch;
@@ -23,6 +25,7 @@ import org.gitlab.api.models.GitlabMergeRequest;
 import org.gitlab.api.models.GitlabMilestone;
 import org.gitlab.api.models.GitlabNote;
 import org.gitlab.api.models.GitlabProject;
+import org.gitlab.api.models.GitlabProjectHook;
 import org.gitlab.api.models.GitlabUser;
 
 public class GitlabToGithubConverter {
@@ -242,5 +245,30 @@ public class GitlabToGithubConverter {
 		comment.setId(glnote.getId());
 		
 		return comment;
+	}
+
+	public static List<RepositoryHook> convertHooks(List<GitlabProjectHook> glhooks) {
+		List<RepositoryHook> hooks = new Vector<RepositoryHook>();
+		
+		for (GitlabProjectHook glhook : glhooks) {
+			hooks.add(convertHook(glhook));
+		}
+		
+		return hooks;
+	}
+
+	public static RepositoryHook convertHook(GitlabProjectHook glhook) {
+		RepositoryHook hook = new RepositoryHook();
+		
+		hook.setCreatedAt(glhook.getCreatedAt());
+		hook.setName("web");	// Always "web" for webhooks ...
+		hook.setUrl(glhook.getUrl());
+		hook.setActive(glhook.getPushEvents() || glhook.isMergeRequestsEvents());
+		hook.setId(Integer.valueOf(glhook.getId()));
+		
+		hook.setConfig(new HashMap<String, String>());
+		hook.getConfig().put("url", glhook.getUrl());
+		
+		return hook;
 	}
 }
