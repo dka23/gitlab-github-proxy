@@ -23,7 +23,7 @@ import com.dkaedv.glghproxy.gitlabclient.OAuthClient;
 public class LoginController {
 	private final static Log LOG = LogFactory.getLog(LoginController.class);
 	
-	@Value("${com.dkaedv.glghproxy.gitlab_url}")
+	@Value("${gitlabUrl}")
 	private String gitlabUrl;
 	
 	@Autowired

@@ -18,7 +18,7 @@ import com.dkaedv.glghproxy.githubentity.AccessToken;
 public class OAuthClient {
 	private final static Log LOG = LogFactory.getLog(OAuthClient.class);
 
-	@Value("${com.dkaedv.glghproxy.gitlab_url}")
+	@Value("${gitlabUrl}")
 	private String gitlabUrl;
 
 	public AccessToken requestAccessToken(String client_id, String client_secret, String code, String callbackUrl) {

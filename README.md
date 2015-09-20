@@ -7,7 +7,7 @@ WORK IN PROGRESS: Completely unfinished and untested at the moment.
 ### 1. Execute the proxy
 It needs to be reachable from the JIRA installation as well as the end-user browsers using the same DNS name and on port 80.
 ```
-mvn spring-boot:run -Dcom.dkaedv.glghproxy.gitlab_url=http://yourgitlabserver.yourcompany.com
+mvn spring-boot:run -DgitlabUrl=http://yourgitlabserver.yourcompany.com
 ```
 
 ### 2. Configure authorization in GitLab
