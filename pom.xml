@@ -32,6 +32,16 @@
 			<artifactId>java-gitlab-api</artifactId>
 			<version>1.1.9</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.mylyn.github</groupId>
+			<artifactId>org.eclipse.egit.github.core</artifactId>
+			<version>4.0.2.201509141540-r</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -49,5 +59,11 @@
 		</plugins>
 	</build>
 
-
+	<repositories>
+		<repository>
+			<id>egit</id>
+			<name>Eclipse egit</name>
+			<url>https://repo.eclipse.org/content/repositories/egit-releases/</url>
+		</repository>
+	</repositories>
 </project>
