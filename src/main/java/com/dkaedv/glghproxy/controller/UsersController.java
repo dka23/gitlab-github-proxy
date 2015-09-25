@@ -6,9 +6,13 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.egit.github.core.Repository;
+import org.eclipse.egit.github.core.User;
 import org.gitlab.api.GitlabAPI;
 import org.gitlab.api.models.GitlabProject;
+import org.gitlab.api.models.GitlabUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -41,6 +45,21 @@ public class UsersController {
 		List<GitlabProject> projects = api.getAllProjects();
 		
 		return GitlabToGithubConverter.convertRepositories(projects);
+	}
+
+	@RequestMapping("/{username}")
+	public ResponseEntity<User> getUser(
+			@PathVariable String username,
+			@RequestHeader("Authorization") String authorization) throws IOException {
+
+		GitlabAPI api = gitlab.connect(authorization);
+		List<GitlabUser> users = api.findUsers(username);
+		
+		if (users.size() >= 1) {
+			return new ResponseEntity<User>(GitlabToGithubConverter.convertUser(users.get(0)), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 }

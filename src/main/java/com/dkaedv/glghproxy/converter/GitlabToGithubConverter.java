@@ -193,6 +193,11 @@ public class GitlabToGithubConverter {
 			pull.setUpdatedAt(glmr.getCreatedAt());
 		}
 		
+		if (pull.isMerged()) {
+			pull.setMergedAt(glmr.getUpdatedAt());
+			pull.setMergedBy(convertUser(glmr.getAssignee()));
+		}
+		
 		return pull;
 	}
 
@@ -234,7 +239,7 @@ public class GitlabToGithubConverter {
 		return milestone;
 	}
 
-	private static User convertUser(GitlabUser gluser) {
+	public static User convertUser(GitlabUser gluser) {
 		if (gluser == null) {
 			return null;
 		}
