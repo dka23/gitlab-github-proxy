@@ -1,7 +1,9 @@
-# GitLab-GitHub Proxy
+# GitLab-GitHub Proxy [![Build Status](https://travis-ci.org/dka23/gitlab-github-proxy.svg?branch=master)](https://travis-ci.org/dka23/gitlab-github-proxy)
 Proxy to provide GitHub-like API on top of Gitlab. Especially designed to use the **JIRA DVCS connector** with Gitlab.
 
 WORK IN PROGRESS: Completely unfinished and untested at the moment.
+
+
 
 ## Use it
 ### 1. Execute the proxy
