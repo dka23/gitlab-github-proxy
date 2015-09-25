@@ -5,7 +5,7 @@
 	<groupId>com.dkaedv</groupId>
 	<artifactId>glghproxy</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>glghproxy</name>
 	<description>GitLab GitHub Proxy</description>
