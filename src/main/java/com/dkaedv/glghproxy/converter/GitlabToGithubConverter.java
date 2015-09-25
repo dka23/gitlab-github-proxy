@@ -52,7 +52,7 @@ public class GitlabToGithubConverter {
 		return branches;
 	}
 
-	public static RepositoryCommit convertCommit(GitlabCommit glcommit, List<GitlabCommitDiff> gldiffs) {
+	public static RepositoryCommit convertCommit(GitlabCommit glcommit, List<GitlabCommitDiff> gldiffs, GitlabUser gluser) {
 		RepositoryCommit repoCommit = new RepositoryCommit();
 
 		repoCommit.setSha(glcommit.getId());
@@ -71,7 +71,7 @@ public class GitlabToGithubConverter {
 
 		User user = new User();
 		user.setEmail(glcommit.getAuthorEmail());
-		user.setLogin(glcommit.getAuthorName());
+		user.setLogin(gluser != null ? gluser.getUsername() : null);
 		repoCommit.setAuthor(user);
 		repoCommit.setCommitter(user);
 
@@ -88,21 +88,55 @@ public class GitlabToGithubConverter {
 		if (gldiffs != null) {
 			List<CommitFile> files = new Vector<CommitFile>();
 			for (GitlabCommitDiff diff : gldiffs) {
-				CommitFile file = new CommitFile();
-				file.setFilename(diff.getNewPath());
-	
-				int additions = StringUtils.countMatches(diff.getDiff(), "\n+") - StringUtils.countMatches(diff.getDiff(), "\n+++");
-				int deletions = StringUtils.countMatches(diff.getDiff(), "\n-") - StringUtils.countMatches(diff.getDiff(), "\n---");
-				
-				file.setAdditions(additions);
-				file.setDeletions(deletions);
-				
-				files.add(file);
+				convertCommitFile(files, diff);
 			}
 			repoCommit.setFiles(files);
 		}
 		
 		return repoCommit;
+	}
+
+	private static void convertCommitFile(List<CommitFile> files, GitlabCommitDiff diff) {
+		int additions = StringUtils.countMatches(diff.getDiff(), "\n+") - StringUtils.countMatches(diff.getDiff(), "\n+++");
+		int deletions = StringUtils.countMatches(diff.getDiff(), "\n-") - StringUtils.countMatches(diff.getDiff(), "\n---");
+
+		if (diff.getNewFile()) {
+			CommitFile file = new CommitFile();
+			file.setStatus("added");
+			file.setFilename(diff.getNewPath());
+			file.setAdditions(additions);
+			file.setChanges(additions);
+			files.add(file);
+		} else if (diff.getDeletedFile()) {
+			CommitFile file = new CommitFile();
+			file.setStatus("removed");
+			file.setFilename(diff.getOldPath());
+			file.setDeletions(deletions);
+			file.setChanges(deletions);
+			files.add(file);
+		} else if (diff.getRenamedFile()) {
+			CommitFile oldFile = new CommitFile();
+			oldFile.setStatus("removed");
+			oldFile.setFilename(diff.getOldPath());
+			oldFile.setDeletions(deletions);
+			oldFile.setChanges(deletions);
+			files.add(oldFile);
+
+			CommitFile newFile = new CommitFile();
+			newFile.setStatus("added");
+			newFile.setFilename(diff.getNewPath());
+			newFile.setDeletions(additions);
+			newFile.setChanges(additions);
+			files.add(newFile);
+		} else {
+			CommitFile file = new CommitFile();
+			file.setStatus("modified");
+			file.setFilename(diff.getNewPath());
+			file.setAdditions(additions);
+			file.setDeletions(deletions);
+			file.setChanges(additions + deletions);
+			files.add(file);
+		}				
 	}
 	
 	public static Repository convertRepository(GitlabProject project) {
@@ -220,7 +254,7 @@ public class GitlabToGithubConverter {
 		List<RepositoryCommit> commits = new Vector<RepositoryCommit>();
 		
 		for (GitlabCommit glcommit : glcommits) {
-			commits.add(convertCommit(glcommit, null));
+			commits.add(convertCommit(glcommit, null, null));
 		}
 		
 		return commits;

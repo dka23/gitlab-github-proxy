@@ -22,6 +22,7 @@ import org.gitlab.api.models.GitlabMergeRequest;
 import org.gitlab.api.models.GitlabNote;
 import org.gitlab.api.models.GitlabProject;
 import org.gitlab.api.models.GitlabProjectHook;
+import org.gitlab.api.models.GitlabUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -76,8 +77,9 @@ public class ReposController {
 		GitlabAPI api = gitlab.connect(authorization);
 		GitlabCommit glcommit = api.getCommit(namespace + "/" + repo, sha);
 		List<GitlabCommitDiff> gldiffs = api.getCommitDiffs(namespace + "/" + repo, sha);
+		List<GitlabUser> users = api.findUsers(glcommit.getAuthorEmail());
 
-		return GitlabToGithubConverter.convertCommit(glcommit, gldiffs);
+		return GitlabToGithubConverter.convertCommit(glcommit, gldiffs, users.size() >= 1 ? users.get(0) : null);
 	}
 	
 	@RequestMapping("/{namespace}/{repo}/events")
