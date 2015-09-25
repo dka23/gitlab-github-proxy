@@ -19,4 +19,15 @@ public class RedirectsController {
 		
 		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo;
 	}
+	
+	@RequestMapping("/{namespace}/{repo}/commit/{sha}")
+	public String commit(
+			@PathVariable String namespace,
+			@PathVariable String repo,
+			@PathVariable String sha
+			) {
+		
+		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo + "/commit/" + sha;
+	}
+	
 }
