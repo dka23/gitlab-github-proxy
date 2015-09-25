@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.Commit;
 import org.eclipse.egit.github.core.CommitFile;
@@ -28,8 +30,12 @@ import org.gitlab.api.models.GitlabProject;
 import org.gitlab.api.models.GitlabProjectHook;
 import org.gitlab.api.models.GitlabUser;
 
-public class GitlabToGithubConverter {
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+public class GitlabToGithubConverter {
+	private final static Log LOG = LogFactory.getLog(GitlabToGithubConverter.class);
+	
 	public static RepositoryBranch convertBranch(GitlabBranch glbranch) {
 		RepositoryBranch branch = new RepositoryBranch();
 		branch.setName(glbranch.getName());
@@ -162,17 +168,17 @@ public class GitlabToGithubConverter {
 		return repos;
 	}
 
-	public static List<PullRequest> convertMergeRequests(List<GitlabMergeRequest> glmergerequests) {
+	public static List<PullRequest> convertMergeRequests(List<GitlabMergeRequest> glmergerequests, String gitlabUrl, String namespace, String repo) {
 		List<PullRequest> pulls = new Vector<PullRequest>();
 		
 		for (GitlabMergeRequest glmr : glmergerequests) {
-			pulls.add(convertMergeRequest(glmr));
+			pulls.add(convertMergeRequest(glmr, gitlabUrl, namespace, repo));
 		}
 		
 		return pulls;
 	}
 
-	private static PullRequest convertMergeRequest(GitlabMergeRequest glmr) {
+	static PullRequest convertMergeRequest(GitlabMergeRequest glmr, String gitlabUrl, String namespace, String repo) {
 		PullRequest pull = new PullRequest();
 		
 		pull.setAssignee(convertUser(glmr.getAssignee()));
@@ -182,9 +188,9 @@ public class GitlabToGithubConverter {
 		pull.setId(glmr.getId());
 		pull.setMilestone(convertMilestone(glmr.getMilestone()));
 		pull.setNumber(glmr.getIid());
-		pull.setHead(createPullRequestMarker(glmr.getSourceBranch()));
-		pull.setBase(createPullRequestMarker(glmr.getTargetBranch()));
-		convertMergeRequestState(pull, glmr.getState());
+		pull.setHead(createPullRequestMarker(glmr.getSourceBranch(), namespace, repo));
+		pull.setBase(createPullRequestMarker(glmr.getTargetBranch(), namespace, repo));
+		convertMergeRequestState(pull, glmr);
 		pull.setTitle(glmr.getTitle());
 		
 		if (glmr.getUpdatedAt() != null) {
@@ -193,33 +199,51 @@ public class GitlabToGithubConverter {
 			pull.setUpdatedAt(glmr.getCreatedAt());
 		}
 		
-		if (pull.isMerged()) {
-			pull.setMergedAt(glmr.getUpdatedAt());
-			pull.setMergedBy(convertUser(glmr.getAssignee()));
-		}
+		pull.setHtmlUrl(gitlabUrl + "/" + namespace + "/" + repo + "/merge_requests/" + glmr.getIid());
+		
+		//LOG.info("Converted merge request " + convertToJson(glmr) + " to pull request " + convertToJson(pull));
 		
 		return pull;
 	}
 
-	private static void convertMergeRequestState(PullRequest pull, String state) {
-		if ("opened".equals(state)) {
+	private static void convertMergeRequestState(PullRequest pull, GitlabMergeRequest glmr) {
+		if ("opened".equals(glmr.getState())) {
 			pull.setState("open");
 			pull.setMerged(false);
-		} else if ("closed".equals(state)) {
+		} else if ("closed".equals(glmr.getState())) {
 			pull.setState("closed");
 			pull.setMerged(false);
-		} else if ("merged".equals(state)) {
+			pull.setClosedAt(glmr.getUpdatedAt());
+		} else if ("merged".equals(glmr.getState())) {
 			pull.setState("closed");
 			pull.setMerged(true);
+			pull.setClosedAt(glmr.getUpdatedAt());
+			pull.setMergedAt(glmr.getUpdatedAt());
+			
+			if (glmr.getAssignee() != null) {
+				pull.setMergedBy(convertUser(glmr.getAssignee()));
+			} else {
+				pull.setMergedBy(convertUser(glmr.getAuthor()));
+			}
 		} else {
-			throw new RuntimeException("Unknown MR state: " + state);
+			throw new RuntimeException("Unknown MR state: " + glmr.getState());
 		}
 	}
 
-	private static PullRequestMarker createPullRequestMarker(String branch) {
+	private static PullRequestMarker createPullRequestMarker(String branch, String namespace, String reponame) {
 		PullRequestMarker marker = new PullRequestMarker();
 		marker.setLabel(branch);
 		marker.setRef(branch);
+		
+		
+		Repository repo = new Repository();
+		repo.setName(reponame);
+		User owner = new User();
+		owner.setLogin(namespace);
+		repo.setOwner(owner);
+		
+		marker.setRepo(repo);
+		
 		return marker;
 	}
 
@@ -251,6 +275,8 @@ public class GitlabToGithubConverter {
 		user.setBio(gluser.getBio());
 		user.setEmail(gluser.getEmail());
 		user.setName(gluser.getName());
+		user.setCreatedAt(gluser.getCreatedAt());
+		user.setType(User.TYPE_USER);
 		
 		return user;
 	}
@@ -309,5 +335,13 @@ public class GitlabToGithubConverter {
 		hook.getConfig().put("url", glhook.getUrl());
 		
 		return hook;
+	}
+	
+	private static String convertToJson(Object o) {
+		try {
+			return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(o);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

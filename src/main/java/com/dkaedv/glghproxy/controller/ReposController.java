@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.catalina.connector.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.egit.github.core.Comment;
-import org.eclipse.egit.github.core.Commit;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.RepositoryBranch;
 import org.eclipse.egit.github.core.RepositoryCommit;
@@ -24,6 +22,7 @@ import org.gitlab.api.models.GitlabProject;
 import org.gitlab.api.models.GitlabProjectHook;
 import org.gitlab.api.models.GitlabUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
@@ -40,6 +39,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.dkaedv.glghproxy.converter.GitlabToGithubConverter;
 import com.dkaedv.glghproxy.githubentity.HookRequest;
 import com.dkaedv.glghproxy.gitlabclient.GitlabSessionProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/api/v3/repos")
@@ -49,6 +49,12 @@ public class ReposController {
 	@Autowired
 	private GitlabSessionProvider gitlab;
 	
+	@Value("${gitlabUrl}")
+	private String gitlabUrl;
+	
+	@Autowired
+	ObjectMapper objectMapper;
+
 	@RequestMapping("/{namespace}/{repo}/branches")
 	@ResponseBody
 	public List<RepositoryBranch> getBranches(
@@ -108,8 +114,10 @@ public class ReposController {
 
 		GitlabAPI api = gitlab.connect(authorization);
 		List<GitlabMergeRequest> glmergerequests = api.getMergeRequests(namespace + "/" + repo);
-		
-		return GitlabToGithubConverter.convertMergeRequests(glmergerequests);
+				
+		List<PullRequest> mergeRequests = GitlabToGithubConverter.convertMergeRequests(glmergerequests, gitlabUrl, namespace, repo);
+		//LOG.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mergeRequests));
+		return mergeRequests;
 	}
 	
 	
@@ -123,11 +131,21 @@ public class ReposController {
 			) throws IOException {
 
 		GitlabAPI api = gitlab.connect(authorization);
-		GitlabProject project = api.getProject(namespace + "/" + repo);
-		GitlabMergeRequest mergeRequest = api.getMergeRequest(project, id);
+		GitlabMergeRequest mergeRequest = findMergeRequestByProjectAndIid(namespace, repo, id, api);		
 		List<GitlabCommit> commits = api.getCommits(mergeRequest);
 		
 		return GitlabToGithubConverter.convertCommits(commits);
+	}
+
+	private GitlabMergeRequest findMergeRequestByProjectAndIid(String namespace, String repo, Integer id, GitlabAPI api) throws IOException {
+		List<GitlabMergeRequest> mergeRequests = api.getMergeRequests(namespace + "/" + repo);
+		for (GitlabMergeRequest mergeRequest : mergeRequests) {
+			if (mergeRequest.getIid().equals(id)) {
+				return mergeRequest;
+			}
+		}
+		
+		return null;
 	}
 
 	/**
@@ -143,8 +161,7 @@ public class ReposController {
 			) throws IOException {
 
 		GitlabAPI api = gitlab.connect(authorization);
-		GitlabProject project = api.getProject(namespace + "/" + repo);
-		GitlabMergeRequest mergeRequest = api.getMergeRequest(project, id);
+		GitlabMergeRequest mergeRequest = findMergeRequestByProjectAndIid(namespace, repo, id, api);		
 		List<GitlabNote> notes = api.getNotes(mergeRequest);
 		
 		return GitlabToGithubConverter.convertComments(notes);
