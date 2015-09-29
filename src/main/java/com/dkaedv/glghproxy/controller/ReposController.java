@@ -1,8 +1,8 @@
 package com.dkaedv.glghproxy.controller;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -96,7 +96,7 @@ public class ReposController {
 			@RequestHeader("Authorization") String authorization
 			) {
 				
-		return new Vector<Event>();
+		return Collections.emptyList();
 	}
 
 	@RequestMapping("/{namespace}/{repo}/pulls")
@@ -180,7 +180,7 @@ public class ReposController {
 			@RequestHeader("Authorization") String authorization
 			) throws IOException {
 
-		return new Vector<Comment>();
+		return Collections.emptyList();
 	}
 
 	@RequestMapping(value = "/{namespace}/{repo}/hooks", method = RequestMethod.GET)
