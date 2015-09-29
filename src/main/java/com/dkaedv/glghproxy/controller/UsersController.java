@@ -42,7 +42,7 @@ public class UsersController {
 		LOG.info("Received request: username=" + username + ", per_page=" + per_page + ", page=" + page);
 
 		GitlabAPI api = gitlab.connect(authorization);
-		List<GitlabProject> projects = api.getAllProjects();
+		List<GitlabProject> projects = api.getProjects();
 		
 		return GitlabToGithubConverter.convertRepositories(projects);
 	}
