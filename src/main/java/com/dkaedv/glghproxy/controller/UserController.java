@@ -1,8 +1,8 @@
 package com.dkaedv.glghproxy.controller;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +27,7 @@ public class UserController {
 
 		LOG.info("Received request: per_page=" + per_page + ", page=" + page);
 
-		return new Vector<Repository>();
+		return Collections.emptyList();
 	}
 
 }

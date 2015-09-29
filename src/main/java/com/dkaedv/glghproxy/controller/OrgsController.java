@@ -1,8 +1,8 @@
 package com.dkaedv.glghproxy.controller;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +29,6 @@ public class OrgsController {
 		
 		LOG.info("Received request: orgname=" + orgname + ", per_page=" + per_page + ", page=" + page + ", authorization=" + authorization);
 
-		return new Vector<Repository>();
+		return Collections.emptyList();
 	}
 }

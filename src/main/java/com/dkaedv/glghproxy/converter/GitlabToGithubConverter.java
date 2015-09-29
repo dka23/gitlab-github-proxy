@@ -1,8 +1,8 @@
 package com.dkaedv.glghproxy.converter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -49,7 +49,7 @@ public class GitlabToGithubConverter {
 	}
 
 	public static List<RepositoryBranch> convertBranches(List<GitlabBranch> glbranches) {
-		List<RepositoryBranch> branches = new Vector<RepositoryBranch>();
+		List<RepositoryBranch> branches = new ArrayList<>(glbranches.size());
 
 		for (GitlabBranch glbranch : glbranches) {
 			RepositoryBranch branch = convertBranch(glbranch);
@@ -81,9 +81,10 @@ public class GitlabToGithubConverter {
 		repoCommit.setAuthor(user);
 		repoCommit.setCommitter(user);
 
-		if (glcommit.getParentIds() != null) {
-			List<Commit> parents = new Vector<Commit>();
-			for (String parentSha : glcommit.getParentIds()) {
+		List<String> parentIds = glcommit.getParentIds();
+		if (parentIds != null) {
+			List<Commit> parents = new ArrayList<>(parentIds.size());
+			for (String parentSha : parentIds) {
 				Commit parent = new Commit();
 				parent.setSha(parentSha);
 				parents.add(parent);
@@ -92,7 +93,7 @@ public class GitlabToGithubConverter {
 		}
 		
 		if (gldiffs != null) {
-			List<CommitFile> files = new Vector<CommitFile>();
+			List<CommitFile> files = new ArrayList<>(gldiffs.size());
 			for (GitlabCommitDiff diff : gldiffs) {
 				convertCommitFile(files, diff);
 			}
@@ -159,7 +160,7 @@ public class GitlabToGithubConverter {
 	}
 
 	public static List<Repository> convertRepositories(List<GitlabProject> projects) {
-		List<Repository> repos = new Vector<Repository>();
+		List<Repository> repos = new ArrayList<>(projects.size());
 		
 		for (GitlabProject project : projects) {
 			repos.add(convertRepository(project));
@@ -169,7 +170,7 @@ public class GitlabToGithubConverter {
 	}
 
 	public static List<PullRequest> convertMergeRequests(List<GitlabMergeRequest> glmergerequests, String gitlabUrl, String namespace, String repo) {
-		List<PullRequest> pulls = new Vector<PullRequest>();
+		List<PullRequest> pulls = new ArrayList<>(glmergerequests.size());
 		
 		for (GitlabMergeRequest glmr : glmergerequests) {
 			pulls.add(convertMergeRequest(glmr, gitlabUrl, namespace, repo));
@@ -282,7 +283,7 @@ public class GitlabToGithubConverter {
 	}
 
 	public static List<RepositoryCommit> convertCommits(List<GitlabCommit> glcommits) {
-		List<RepositoryCommit> commits = new Vector<RepositoryCommit>();
+		List<RepositoryCommit> commits = new ArrayList<>(glcommits.size());
 		
 		for (GitlabCommit glcommit : glcommits) {
 			commits.add(convertCommit(glcommit, null, null));
@@ -292,7 +293,7 @@ public class GitlabToGithubConverter {
 	}
 
 	public static List<Comment> convertComments(List<GitlabNote> glnotes) {
-		List<Comment> comments = new Vector<Comment>();
+		List<Comment> comments = new ArrayList<>(glnotes.size());
 		
 		for (GitlabNote glnote : glnotes) {
 			comments.add(convertComment(glnote));
@@ -313,7 +314,7 @@ public class GitlabToGithubConverter {
 	}
 
 	public static List<RepositoryHook> convertHooks(List<GitlabProjectHook> glhooks) {
-		List<RepositoryHook> hooks = new Vector<RepositoryHook>();
+		List<RepositoryHook> hooks = new ArrayList<>(glhooks.size());
 		
 		for (GitlabProjectHook glhook : glhooks) {
 			hooks.add(convertHook(glhook));
