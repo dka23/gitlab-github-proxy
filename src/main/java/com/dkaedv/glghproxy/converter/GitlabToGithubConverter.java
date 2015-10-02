@@ -184,7 +184,7 @@ public class GitlabToGithubConverter {
 		return pulls;
 	}
 
-	static PullRequest convertMergeRequest(GitlabMergeRequest glmr, String gitlabUrl, String namespace, String repo) {
+	public static PullRequest convertMergeRequest(GitlabMergeRequest glmr, String gitlabUrl, String namespace, String repo) {
 		PullRequest pull = new PullRequest();
 		
 		pull.setAssignee(convertUser(glmr.getAssignee()));

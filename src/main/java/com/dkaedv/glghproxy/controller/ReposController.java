@@ -122,7 +122,22 @@ public class ReposController {
 		//LOG.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mergeRequests));
 		return mergeRequests;
 	}
-	
+
+	@RequestMapping("/{namespace}/{repo}/pulls/{id}")
+	@ResponseBody
+	public PullRequest getPull(
+			@PathVariable String namespace,
+			@PathVariable String repo,
+			@PathVariable Integer id,
+			@RequestHeader("Authorization") String authorization
+			) throws IOException {
+
+		GitlabAPI api = gitlab.connect(authorization);
+		GitlabMergeRequest mergeRequest = findMergeRequestByProjectAndIid(namespace, repo, id, api);
+		
+		return GitlabToGithubConverter.convertMergeRequest(mergeRequest, authorization, namespace, repo);
+	}
+
 	
 	@RequestMapping("/{namespace}/{repo}/pulls/{id}/commits")
 	@ResponseBody
