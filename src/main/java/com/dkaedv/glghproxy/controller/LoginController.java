@@ -6,8 +6,6 @@ import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -21,8 +19,6 @@ import com.dkaedv.glghproxy.gitlabclient.OAuthClient;
 @Controller
 @RequestMapping("/login/oauth")
 public class LoginController {
-	private final static Log LOG = LogFactory.getLog(LoginController.class);
-	
 	@Value("${gitlabUrl}")
 	private String gitlabUrl;
 	
@@ -41,8 +37,6 @@ public class LoginController {
 			@RequestParam String client_id,
 			@RequestParam String redirect_uri,
 			HttpServletRequest request) throws UnsupportedEncodingException, MalformedURLException {
-		
-		LOG.info("Received request: scope=" + scope + ", client_id=" + client_id + ", redirect_uri=" + redirect_uri);
 		
 		// Save redirect uri
 		this.redirectUri = redirect_uri;
@@ -81,8 +75,6 @@ public class LoginController {
 			@RequestParam String code,
 			HttpServletRequest request
 			) throws MalformedURLException {
-
-		LOG.info("Received request: client_id=" + client_id + ", client_secret=" + client_secret + ", code=" + code);
 
 		return oauthClient.requestAccessToken(client_id, client_secret, code, buildCallbackUrl(request)).toString();
 	}

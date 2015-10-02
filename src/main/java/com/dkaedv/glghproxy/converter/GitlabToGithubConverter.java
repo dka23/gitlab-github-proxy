@@ -1,14 +1,10 @@
 package com.dkaedv.glghproxy.converter;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.Commit;
 import org.eclipse.egit.github.core.CommitFile;
@@ -23,7 +19,6 @@ import org.eclipse.egit.github.core.RepositoryHook;
 import org.eclipse.egit.github.core.TypedResource;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.event.Event;
-import org.eclipse.egit.github.core.event.EventRepository;
 import org.eclipse.egit.github.core.event.PullRequestPayload;
 import org.gitlab.api.models.GitlabBranch;
 import org.gitlab.api.models.GitlabCommit;
@@ -39,8 +34,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GitlabToGithubConverter {
-	private final static Log LOG = LogFactory.getLog(GitlabToGithubConverter.class);
-	
 	public static RepositoryBranch convertBranch(GitlabBranch glbranch) {
 		RepositoryBranch branch = new RepositoryBranch();
 		branch.setName(glbranch.getName());

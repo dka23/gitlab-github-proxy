@@ -28,7 +28,9 @@ public class LoggingFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) res;
 		HttpServletRequest request = (HttpServletRequest) req;
 
-		LOG.info("Request to " + request.getRequestURI() + "?" + request.getQueryString());
+		String query = (request.getQueryString() == null) ? "" : "?" + request.getQueryString();
+		LOG.info("Request to " + request.getRequestURI() + query);
+		
 		chain.doFilter(req, res);
 
 		request.getPathInfo();
