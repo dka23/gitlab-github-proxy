@@ -365,6 +365,8 @@ public class GitlabToGithubConverter {
 		payload.setNumber(payload.getPullRequest().getNumber());
 		
 		event.setPayload(payload);
+		
+		event.setId(glmergerequest.getId() + "-" + glmergerequest.getUpdatedAt().getTime());
 				
 		return event;
 	}

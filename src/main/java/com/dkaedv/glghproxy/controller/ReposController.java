@@ -135,7 +135,7 @@ public class ReposController {
 		GitlabAPI api = gitlab.connect(authorization);
 		GitlabMergeRequest mergeRequest = findMergeRequestByProjectAndIid(namespace, repo, id, api);
 		
-		return GitlabToGithubConverter.convertMergeRequest(mergeRequest, authorization, namespace, repo);
+		return GitlabToGithubConverter.convertMergeRequest(mergeRequest, gitlabUrl, namespace, repo);
 	}
 
 	
