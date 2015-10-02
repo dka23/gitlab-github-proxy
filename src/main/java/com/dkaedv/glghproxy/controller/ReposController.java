@@ -94,9 +94,12 @@ public class ReposController {
 			@PathVariable String namespace,
 			@PathVariable String repo,
 			@RequestHeader("Authorization") String authorization
-			) {
-				
-		return Collections.emptyList();
+			) throws IOException {
+
+		GitlabAPI api = gitlab.connect(authorization);
+		List<GitlabMergeRequest> glmergerequests = api.getMergeRequests(namespace + "/" + repo);
+		
+		return GitlabToGithubConverter.convertMergeRequestsToEvents(glmergerequests, gitlabUrl, namespace, repo);
 	}
 
 	@RequestMapping("/{namespace}/{repo}/pulls")

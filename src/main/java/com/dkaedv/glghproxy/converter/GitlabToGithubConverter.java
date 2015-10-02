@@ -1,6 +1,8 @@
 package com.dkaedv.glghproxy.converter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +22,9 @@ import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.RepositoryHook;
 import org.eclipse.egit.github.core.TypedResource;
 import org.eclipse.egit.github.core.User;
+import org.eclipse.egit.github.core.event.Event;
+import org.eclipse.egit.github.core.event.EventRepository;
+import org.eclipse.egit.github.core.event.PullRequestPayload;
 import org.gitlab.api.models.GitlabBranch;
 import org.gitlab.api.models.GitlabCommit;
 import org.gitlab.api.models.GitlabCommitDiff;
@@ -344,5 +349,30 @@ public class GitlabToGithubConverter {
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static List<Event> convertMergeRequestsToEvents(List<GitlabMergeRequest> glmergerequests, String gitlabUrl, String namespace, String repo) {
+		List<Event> events = new ArrayList<>(glmergerequests.size());
+		
+		for (GitlabMergeRequest glmergerequest : glmergerequests) {
+			events.add(convertMergeRequestToEvent(glmergerequest, gitlabUrl, namespace, repo));
+		}
+		
+		return events;
+	}
+
+	private static Event convertMergeRequestToEvent(GitlabMergeRequest glmergerequest, String gitlabUrl, String namespace, String repo) {
+		Event event = new Event();
+		
+		event.setType(Event.TYPE_PULL_REQUEST);
+		event.setCreatedAt(glmergerequest.getUpdatedAt());
+		
+		PullRequestPayload payload = new PullRequestPayload();
+		payload.setPullRequest(convertMergeRequest(glmergerequest, gitlabUrl, namespace, repo));
+		payload.setNumber(payload.getPullRequest().getNumber());
+		
+		event.setPayload(payload);
+				
+		return event;
 	}
 }
