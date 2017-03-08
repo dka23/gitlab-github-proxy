@@ -5,6 +5,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.util.AntPathMatcher;
+
 @Controller
 public class RedirectsController {
 
@@ -38,13 +42,18 @@ public class RedirectsController {
 		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo + "/commit/" + sha;
 	}
 
-	@RequestMapping("/{namespace}/{repo}/tree/{branch}")
+	@RequestMapping("/{namespace}/{repo}/tree/**")
 	public String repoTree(
 			@PathVariable String namespace,
 			@PathVariable String repo,
-			@PathVariable String branch
+			HttpServletRequest request
+			//@PathVariable String branch
 			) {
-		
+		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		String bestMatchPattern = (String ) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+		AntPathMatcher apm = new AntPathMatcher();
+		String branch = apm.extractPathWithinPattern(bestMatchPattern, path);
+
 		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo + "/tree/" + branch;
 	}
 
