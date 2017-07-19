@@ -17,9 +17,7 @@ public class UserController {
 
 	@RequestMapping("/repos")
 	@ResponseBody
-	public List<Repository> getReposForCurrentUser(
-			@RequestParam String per_page,
-			@RequestParam String page,
+	public List<Repository> getReposForCurrentUser(@RequestParam String per_page, @RequestParam String page,
 			@RequestHeader("Authorization") String authorization) throws IOException {
 
 		return Collections.emptyList();

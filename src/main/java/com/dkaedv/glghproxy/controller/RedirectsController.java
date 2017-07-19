@@ -15,6 +15,9 @@ public class RedirectsController {
 	@Value("${gitlabUrl}")
 	private String gitlabUrl;
 
+	@Value("${treatOrgaAsOwner}")
+	private Boolean treatOrgaAsOwner;
+	
 	@RequestMapping("/{namespace}")
 	public String namespace(
 			@PathVariable String namespace
@@ -29,6 +32,9 @@ public class RedirectsController {
 			@PathVariable String repo
 			) {
 		
+		namespace = OwnerFixup.fixupNamespace(repo, treatOrgaAsOwner);
+		repo = OwnerFixup.fixupRepo(repo, treatOrgaAsOwner);
+		
 		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo;
 	}
 	
@@ -39,6 +45,9 @@ public class RedirectsController {
 			@PathVariable String sha
 			) {
 		
+		namespace = OwnerFixup.fixupNamespace(repo, treatOrgaAsOwner);
+		repo = OwnerFixup.fixupRepo(repo, treatOrgaAsOwner);
+
 		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo + "/commit/" + sha;
 	}
 
@@ -49,6 +58,10 @@ public class RedirectsController {
 			HttpServletRequest request
 			//@PathVariable String branch
 			) {
+		
+		namespace = OwnerFixup.fixupNamespace(repo, treatOrgaAsOwner);
+		repo = OwnerFixup.fixupRepo(repo, treatOrgaAsOwner);
+
 		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 		String bestMatchPattern = (String ) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 		AntPathMatcher apm = new AntPathMatcher();
@@ -57,4 +70,28 @@ public class RedirectsController {
 		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo + "/tree/" + branch;
 	}
 
+	@RequestMapping("/{namespace}/{repo}/compare")
+	public String compare(
+			@PathVariable String namespace,
+			@PathVariable String repo
+			) {
+		
+		namespace = OwnerFixup.fixupNamespace(repo, treatOrgaAsOwner);
+		repo = OwnerFixup.fixupRepo(repo, treatOrgaAsOwner);
+
+		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo + "/compare";
+	}
+
+	@RequestMapping("/{namespace}/{repo}/compare/{spec}")
+	public String compare(
+			@PathVariable String namespace,
+			@PathVariable String repo,
+			@PathVariable String spec
+			) {
+		
+		namespace = OwnerFixup.fixupNamespace(repo, treatOrgaAsOwner);
+		repo = OwnerFixup.fixupRepo(repo, treatOrgaAsOwner);
+		
+		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo + "/compare/" + spec;
+	}
 }

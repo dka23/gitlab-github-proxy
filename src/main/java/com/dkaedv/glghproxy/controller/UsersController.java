@@ -24,31 +24,28 @@ import com.dkaedv.glghproxy.gitlabclient.GitlabSessionProvider;
 @Controller
 @RequestMapping("/api/v3/users")
 public class UsersController {
+
 	@Autowired
 	private GitlabSessionProvider gitlab;
 
 	@RequestMapping("/{username}/repos")
 	@ResponseBody
-	public List<Repository> getReposForUser(
-			@PathVariable String username,
-			@RequestParam String per_page,
-			@RequestParam String page,
-			@RequestHeader("Authorization") String authorization) throws IOException {
+	public List<Repository> getReposForUser(@PathVariable String username, @RequestParam String per_page,
+			@RequestParam String page, @RequestHeader("Authorization") String authorization) throws IOException {
 
 		GitlabAPI api = gitlab.connect(authorization);
-		List<GitlabProject> projects = api.getProjects();
-		
+		List<GitlabProject> projects = OwnerFixup.getRepositories(api);
+
 		return GitlabToGithubConverter.convertRepositories(projects);
 	}
 
 	@RequestMapping("/{username}")
-	public ResponseEntity<User> getUser(
-			@PathVariable String username,
+	public ResponseEntity<User> getUser(@PathVariable String username,
 			@RequestHeader("Authorization") String authorization) throws IOException {
 
 		GitlabAPI api = gitlab.connect(authorization);
 		List<GitlabUser> users = api.findUsers(username);
-		
+
 		if (users.size() >= 1) {
 			return new ResponseEntity<User>(GitlabToGithubConverter.convertUser(users.get(0)), HttpStatus.OK);
 		} else {
