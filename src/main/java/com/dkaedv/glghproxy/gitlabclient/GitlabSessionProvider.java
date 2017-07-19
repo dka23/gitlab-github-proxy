@@ -20,7 +20,7 @@ public class GitlabSessionProvider {
 		String token = authorizationHeader.replaceAll("token ", "");
 		
 		GitlabAPI api = GitlabAPI.connect(gitlabUrl, token, TokenType.ACCESS_TOKEN);
-		api.ignoreCertificateErrors(true);
+		api.ignoreCertificateErrors(false);
 		return api;
 	}
 	

@@ -22,11 +22,11 @@ public class OAuthClient {
 	private String gitlabUrl;
 
 	public AccessToken requestAccessToken(String client_id, String client_secret, String code, String callbackUrl) {
-		HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        });
+//		HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+//            public boolean verify(String hostname, SSLSession session) {
+//                return true;
+//            }
+//        });
 		
 		RestTemplate rest = new RestTemplate();
 		
