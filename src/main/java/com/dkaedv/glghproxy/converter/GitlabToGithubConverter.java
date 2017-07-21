@@ -215,7 +215,7 @@ public class GitlabToGithubConverter {
 	}
 
 	private static void convertMergeRequestState(PullRequest pull, GitlabMergeRequest glmr) {
-		if ("opened".equals(glmr.getState())) {
+		if ("opened".equals(glmr.getState()) || "reopened".equals(glmr.getState())) {
 			pull.setState("open");
 			pull.setMerged(false);
 		} else if ("closed".equals(glmr.getState())) {
@@ -363,7 +363,7 @@ public class GitlabToGithubConverter {
 		return events;
 	}
 
-	private static Event convertMergeRequestToEvent(GitlabMergeRequest glmergerequest, String gitlabUrl,
+	public static Event convertMergeRequestToEvent(GitlabMergeRequest glmergerequest, String gitlabUrl,
 			String namespace, String repo) {
 		Event event = new Event();
 
