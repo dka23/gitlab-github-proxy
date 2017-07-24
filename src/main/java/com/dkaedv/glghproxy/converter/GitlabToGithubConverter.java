@@ -278,7 +278,10 @@ public class GitlabToGithubConverter {
 		User user = new User();
 		user.setId(gluser.getId());
 		user.setLogin(gluser.getUsername());
-		user.setAvatarUrl(gluser.getAvatarUrl());
+		String avatarUrl = gluser.getAvatarUrl();
+		if (avatarUrl != null && avatarUrl.length() > 0) {
+			user.setAvatarUrl(avatarUrl);
+		}
 		user.setBio(gluser.getBio());
 		user.setEmail(gluser.getEmail());
 		user.setName(gluser.getName());
