@@ -12,6 +12,12 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
 
+	/**
+	 * The date format used by GitHub. No millis! JIRA DVCS Connector fails parsing
+	 * dates when we have millis, which results in the timezone not being applied.
+	 */
+	public static final String GITHUB_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+
 	public static void main(String[] args) {
 		System.setProperty("org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH", "true");
 		SpringApplication.run(Application.class, args);
@@ -27,7 +33,7 @@ public class Application extends SpringBootServletInitializer {
 		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
 		builder
 			.indentOutput(true)
-			.simpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+			.simpleDateFormat(GITHUB_DATE_FORMAT)
 			.propertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy());
 		
 		return builder;
