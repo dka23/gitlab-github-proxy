@@ -4,7 +4,7 @@
 
 	<groupId>com.dkaedv</groupId>
 	<artifactId>glghproxy</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<packaging>war</packaging>
 
 	<name>glghproxy</name>
