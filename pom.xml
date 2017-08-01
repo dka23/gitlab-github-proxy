@@ -36,12 +36,12 @@
 		<dependency>
 			<groupId>org.gitlab</groupId>
 			<artifactId>java-gitlab-api</artifactId>
-			<version>1.1.9</version>
+			<version>1.2.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.mylyn.github</groupId>
 			<artifactId>org.eclipse.egit.github.core</artifactId>
-			<version>4.0.2.201509141540-r</version>
+			<version>4.8.0.201706111038-r</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
