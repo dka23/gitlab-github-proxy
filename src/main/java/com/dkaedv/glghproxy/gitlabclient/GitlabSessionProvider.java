@@ -9,6 +9,8 @@ import org.gitlab.api.TokenType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.dkaedv.glghproxy.Constants;
+
 @Component
 public class GitlabSessionProvider {
 	private final static Log LOG = LogFactory.getLog(GitlabSessionProvider.class);
@@ -20,7 +22,7 @@ public class GitlabSessionProvider {
 		String token = authorizationHeader.replaceAll("token ", "");
 		
 		GitlabAPI api = GitlabAPI.connect(gitlabUrl, token, TokenType.ACCESS_TOKEN);
-		api.ignoreCertificateErrors(false);
+		api.ignoreCertificateErrors(Constants.IGNORE_SSL_ERRORS);
 		return api;
 	}
 	

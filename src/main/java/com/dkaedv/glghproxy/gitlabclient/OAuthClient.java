@@ -12,6 +12,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.dkaedv.glghproxy.Constants;
 import com.dkaedv.glghproxy.githubentity.AccessToken;
 
 @Component
@@ -22,11 +23,14 @@ public class OAuthClient {
 	private String gitlabUrl;
 
 	public AccessToken requestAccessToken(String client_id, String client_secret, String code, String callbackUrl) {
-//		HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-//            public boolean verify(String hostname, SSLSession session) {
-//                return true;
-//            }
-//        });
+		if (!Constants.STRICT_SSL) {
+			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+				@Override
+				public boolean verify(String hostname, SSLSession session) {
+					return true;
+				}
+			});
+		}
 		
 		RestTemplate rest = new RestTemplate();
 		
