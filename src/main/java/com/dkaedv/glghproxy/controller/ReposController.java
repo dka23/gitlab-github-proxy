@@ -231,7 +231,7 @@ public class ReposController {
 				hook.getEvents().contains("push"),
 				false,
 				hook.getEvents().contains("pull_request"),
-				hook.getEvents().contains("push"), // there is no distinction between push and tag-push in github API
+				hook.getEvents().contains("push"), // there's no differentiation for tag-pushes in the github API
 				Constants.STRICT_SSL);
 
 		return GitlabToGithubConverter.convertHook(createdHook);

@@ -4,7 +4,7 @@
 
 	<groupId>com.dkaedv</groupId>
 	<artifactId>glghproxy</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<version>0.2.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<name>glghproxy</name>
@@ -34,9 +34,9 @@
             <scope>provided</scope>
         </dependency>
 		<dependency>
-			<groupId>org.gitlab</groupId>
+			<groupId>de.gebit</groupId>
 			<artifactId>java-gitlab-api</artifactId>
-			<version>1.2.8</version>
+			<version>4.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.mylyn.github</groupId>
