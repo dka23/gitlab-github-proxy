@@ -72,4 +72,8 @@
 			<url>https://repo.eclipse.org/content/repositories/egit-releases/</url>
 		</repository>
 	</repositories>
+	<scm>
+		<connection>scm:git:https://github.com/GEBIT/gitlab-github-proxy.git</connection>
+		<url>https://github.com/GEBIT/gitlab-github-proxy.git</url>
+	</scm>
 </project>
