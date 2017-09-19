@@ -25,6 +25,7 @@ import org.gitlab.api.models.GitlabCommit;
 import org.gitlab.api.models.GitlabCommitDiff;
 import org.gitlab.api.models.GitlabMergeRequest;
 import org.gitlab.api.models.GitlabMilestone;
+import org.gitlab.api.models.GitlabNamespace;
 import org.gitlab.api.models.GitlabNote;
 import org.gitlab.api.models.GitlabProject;
 import org.gitlab.api.models.GitlabProjectHook;
@@ -158,7 +159,10 @@ public class GitlabToGithubConverter {
 		repo.setHtmlUrl(project.getWebUrl());
 
 		User user = new User();
-		user.setLogin(project.getNamespace().getName());
+		GitlabNamespace namespace = project.getNamespace();
+		if (namespace != null) {
+			user.setLogin(namespace.getName());
+		}
 		repo.setOwner(user);
 
 		return repo;
