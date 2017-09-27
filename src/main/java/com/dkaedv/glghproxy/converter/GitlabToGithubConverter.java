@@ -158,6 +158,16 @@ public class GitlabToGithubConverter {
 		repo.setDescription(project.getDescription());
 		repo.setGitUrl(project.getHttpUrl());
 		repo.setHtmlUrl(project.getWebUrl());
+		repo.setDefaultBranch(project.getDefaultBranch());
+		GitlabProject glForkedFrom = project.getForkedFrom();
+		repo.setFork(glForkedFrom != null);
+		if (glForkedFrom != null) {
+			Repository source = new Repository();
+			source.setId(glForkedFrom.getId());
+			source.setName(glForkedFrom.getName());
+			source.setHtmlUrl(glForkedFrom.getWebUrl());
+			repo.setSource(source);
+		}
 
 		User user = new User();
 		GitlabNamespace namespace = project.getNamespace();
@@ -203,6 +213,7 @@ public class GitlabToGithubConverter {
 		pull.setNumber(glmr.getIid());
 		pull.setHead(createPullRequestMarker(glmr.getSourceBranch(), namespace, repo));
 		pull.setBase(createPullRequestMarker(glmr.getTargetBranch(), namespace, repo));
+
 		convertMergeRequestState(pull, glmr);
 		pull.setTitle(glmr.getTitle());
 
