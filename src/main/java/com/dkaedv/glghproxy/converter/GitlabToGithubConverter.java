@@ -19,6 +19,7 @@ import org.eclipse.egit.github.core.RepositoryHook;
 import org.eclipse.egit.github.core.TypedResource;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.event.Event;
+import org.eclipse.egit.github.core.event.EventRepository;
 import org.eclipse.egit.github.core.event.PullRequestPayload;
 import org.gitlab.api.models.GitlabBranch;
 import org.gitlab.api.models.GitlabCommit;
@@ -384,6 +385,10 @@ public class GitlabToGithubConverter {
 		event.setPayload(payload);
 
 		event.setId(glmergerequest.getId() + "-" + glmergerequest.getUpdatedAt().getTime());
+		EventRepository eventRepository = new EventRepository();
+		eventRepository.setId(glmergerequest.getProjectId());
+		eventRepository.setName(repo);
+		event.setRepo(eventRepository);
 
 		return event;
 	}
