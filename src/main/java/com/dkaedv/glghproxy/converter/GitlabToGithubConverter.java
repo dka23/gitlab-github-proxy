@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.Commit;
 import org.eclipse.egit.github.core.CommitFile;
@@ -36,6 +38,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GitlabToGithubConverter {
+
+	private static final Log LOG = LogFactory.getLog(GitlabToGithubConverter.class);
 
 	public static RepositoryBranch convertBranch(GitlabBranch glbranch) {
 		RepositoryBranch branch = new RepositoryBranch();
@@ -225,12 +229,16 @@ public class GitlabToGithubConverter {
 
 		pull.setHtmlUrl(gitlabUrl + "/" + namespace + "/" + repo + "/merge_requests/" + glmr.getIid());
 
-		// LOG.info("Converted merge request " + convertToJson(glmr) + " to pull request " + convertToJson(pull));
+//		LOG.info("Converted merge request " + convertToJson(glmr) + " to pull request " + convertToJson(pull));
 
 		return pull;
 	}
 
 	private static void convertMergeRequestState(PullRequest pull, GitlabMergeRequest glmr) {
+		if ("can_be_merged".equals(glmr.getMergeStatus())) {
+			pull.setMergeable(true);
+		}
+		
 		if ("opened".equals(glmr.getState()) || "reopened".equals(glmr.getState())) {
 			pull.setState("open");
 			pull.setMerged(false);
