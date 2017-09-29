@@ -95,7 +95,7 @@ public class ReposController {
 			users = api.findUsers(glcommit.getAuthorEmail());
 		} catch (IOException ex) {
 			users = Collections.emptyList();
-			LOG.warn("Unable to find gitlab user based on email: " + glcommit.getAuthorEmail());
+			LOG.warn("Unable to find gitlab user based on email: " + glcommit.getAuthorEmail() + " in repository: " + namespace + "/" + repo);
 		}
 
 		return GitlabToGithubConverter.convertCommit(glcommit, gldiffs, users.size() >= 1 ? users.get(0) : null);
