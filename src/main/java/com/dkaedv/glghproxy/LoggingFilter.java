@@ -31,9 +31,13 @@ public class LoggingFilter implements Filter {
 		String query = (request.getQueryString() == null) ? "" : "?" + request.getQueryString();
 		LOG.info("Request to " + request.getRequestURI() + query);
 		
-		chain.doFilter(req, res);
-
-		request.getPathInfo();
+		try {
+			chain.doFilter(req, res);
+			request.getPathInfo();
+		} catch (Throwable ex) {
+			LOG.error("Error handling request " + request.getRequestURI(), ex);
+			throw ex;
+		}
 	}
 
 	@Override
