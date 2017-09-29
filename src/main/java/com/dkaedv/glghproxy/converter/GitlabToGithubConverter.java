@@ -217,7 +217,6 @@ public class GitlabToGithubConverter {
 		pull.setNumber(glmr.getIid());
 		pull.setHead(createPullRequestMarker(glmr.getSourceBranch(), namespace, repo));
 		pull.setBase(createPullRequestMarker(glmr.getTargetBranch(), namespace, repo));
-
 		convertMergeRequestState(pull, glmr);
 		pull.setTitle(glmr.getTitle());
 
@@ -227,7 +226,10 @@ public class GitlabToGithubConverter {
 			pull.setUpdatedAt(glmr.getCreatedAt());
 		}
 
-		pull.setHtmlUrl(gitlabUrl + "/" + namespace + "/" + repo + "/merge_requests/" + glmr.getIid());
+		String htmlUrl = gitlabUrl + "/" + namespace + "/" + repo + "/merge_requests/" + glmr.getIid();
+		pull.setHtmlUrl(htmlUrl);
+		pull.setDiffUrl(htmlUrl + ".diff");
+		pull.setPatchUrl(htmlUrl + ".patch");
 
 //		LOG.info("Converted merge request " + convertToJson(glmr) + " to pull request " + convertToJson(pull));
 
