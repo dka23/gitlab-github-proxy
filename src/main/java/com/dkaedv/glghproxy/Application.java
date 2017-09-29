@@ -7,7 +7,9 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
@@ -30,6 +32,10 @@ public class Application extends SpringBootServletInitializer {
 	
 	@Bean
 	public Jackson2ObjectMapperBuilder jacksonBuilder() {
+		return createObjectMapperBuilder();
+	}
+
+	private static Jackson2ObjectMapperBuilder createObjectMapperBuilder() {
 		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
 		builder
 			.indentOutput(true)
@@ -37,5 +43,9 @@ public class Application extends SpringBootServletInitializer {
 			.propertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy());
 		
 		return builder;
+	}
+
+	public static ObjectMapper createObjectMapper() {
+		return createObjectMapperBuilder().build();
 	}
 }

@@ -2,7 +2,9 @@ package com.dkaedv.glghproxy.controller;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -110,6 +112,7 @@ public class ReposController {
 		repo = OwnerFixup.fixupRepo(repo, treatOrgaAsOwner);
 		GitlabAPI api = gitlab.connect(authorization);
 		List<GitlabMergeRequest> glmergerequests = api.getMergeRequests(namespace + "/" + repo);
+		Map<Integer,GitlabUser> userCache = new HashMap<Integer, GitlabUser>();
 
 		return GitlabToGithubConverter.convertMergeRequestsToEvents(glmergerequests, gitlabUrl, namespace, repo);
 	}
@@ -124,8 +127,9 @@ public class ReposController {
 		namespace = OwnerFixup.fixupNamespace(repo, treatOrgaAsOwner);
 		repo = OwnerFixup.fixupRepo(repo, treatOrgaAsOwner);
 		GitlabAPI api = gitlab.connect(authorization);
-		List<GitlabMergeRequest> glmergerequests = api.getMergeRequests(namespace + "/" + repo);
-
+		List<GitlabMergeRequest> glmergerequests = api.getMergeRequestsWithStatus(namespace + "/" + repo, GitlabToGithubConverter.translatePrStateToMrStatus(state));
+		Map<Integer,GitlabUser> userCache = new HashMap<Integer, GitlabUser>();
+		
 		List<PullRequest> mergeRequests = GitlabToGithubConverter.convertMergeRequests(glmergerequests,
 				gitlabUrl,
 				namespace,
@@ -146,6 +150,7 @@ public class ReposController {
 
 		return GitlabToGithubConverter.convertMergeRequest(mergeRequest, gitlabUrl, namespace, repo);
 	}
+
 
 	@RequestMapping("/{namespace}/{repo}/pulls/{id}/commits")
 	@ResponseBody

@@ -34,6 +34,7 @@ import org.gitlab.api.models.GitlabProject;
 import org.gitlab.api.models.GitlabProjectHook;
 import org.gitlab.api.models.GitlabUser;
 
+import com.dkaedv.glghproxy.Application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -241,14 +242,14 @@ public class GitlabToGithubConverter {
 			pull.setMergeable(true);
 		}
 		
-		if ("opened".equals(glmr.getState()) || "reopened".equals(glmr.getState())) {
+		if (GitlabMergeRequest.STATUS_OPENED.equals(glmr.getState()) || "reopened".equals(glmr.getState())) {
 			pull.setState("open");
 			pull.setMerged(false);
-		} else if ("closed".equals(glmr.getState())) {
+		} else if (GitlabMergeRequest.STATUS_CLOSED.equals(glmr.getState())) {
 			pull.setState("closed");
 			pull.setMerged(false);
 			pull.setClosedAt(glmr.getUpdatedAt());
-		} else if ("merged".equals(glmr.getState())) {
+		} else if (GitlabMergeRequest.STATUS_MERGED.equals(glmr.getState())) {
 			pull.setState("closed");
 			pull.setMerged(true);
 			pull.setClosedAt(glmr.getUpdatedAt());
@@ -375,7 +376,7 @@ public class GitlabToGithubConverter {
 
 	private static String convertToJson(Object o) {
 		try {
-			return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(o);
+			return Application.createObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(o);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
@@ -412,5 +413,15 @@ public class GitlabToGithubConverter {
 		event.setRepo(eventRepository);
 
 		return event;
+	}
+
+	public static String translatePrStateToMrStatus(String aState) {
+		if ("open".equals(aState)) {
+			return GitlabMergeRequest.STATUS_OPENED;
+		}
+		if ("closed".equals(aState)) {
+			return GitlabMergeRequest.STATUS_CLOSED;
+		}
+		throw new RuntimeException("Unknown pull request state: " + aState);
 	}
 }
