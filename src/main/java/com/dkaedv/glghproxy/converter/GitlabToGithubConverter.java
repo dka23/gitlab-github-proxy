@@ -36,7 +36,6 @@ import org.gitlab.api.models.GitlabUser;
 
 import com.dkaedv.glghproxy.Application;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GitlabToGithubConverter {
 

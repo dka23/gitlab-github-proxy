@@ -7,6 +7,7 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -40,6 +41,7 @@ public class Application extends SpringBootServletInitializer {
 		builder
 			.indentOutput(true)
 			.simpleDateFormat(GITHUB_DATE_FORMAT)
+			.serializationInclusion(Include.NON_EMPTY)
 			.propertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy());
 		
 		return builder;
