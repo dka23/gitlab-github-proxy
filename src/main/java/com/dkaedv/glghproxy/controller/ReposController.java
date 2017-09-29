@@ -46,7 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequestMapping("/api/v3/repos")
 public class ReposController {
 
-	private static final Log LOG = LogFactory.getLog(OrgsController.class);
+	private static final Log LOG = LogFactory.getLog(ReposController.class);
 
 	@Autowired
 	private GitlabSessionProvider gitlab;
