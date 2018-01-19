@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.dkaedv.glghproxy.Constants;
+import com.dkaedv.glghproxy.Utils;
 import com.dkaedv.glghproxy.converter.GitlabToGithubConverter;
 import com.dkaedv.glghproxy.githubentity.HookRequest;
 import com.dkaedv.glghproxy.gitlabclient.GitlabSessionProvider;
@@ -92,15 +93,15 @@ public class ReposController {
 		GitlabAPI api = gitlab.connect(authorization);
 		GitlabCommit glcommit = api.getCommit(namespace + "/" + repo, sha);
 		List<GitlabCommitDiff> gldiffs = api.getCommitDiffs(namespace + "/" + repo, sha);
-		List<GitlabUser> users = null;
+		GitlabUser user = null;
 		try {
-			users = api.findUsers(glcommit.getAuthorEmail());
+			List<GitlabUser> users = api.findUsers(glcommit.getAuthorEmail());
+			user = Utils.findSingleUser(users, glcommit.getAuthorEmail());
 		} catch (IOException ex) {
-			users = Collections.emptyList();
 			LOG.warn("Unable to find gitlab user based on email: " + glcommit.getAuthorEmail() + " in repository: " + namespace + "/" + repo);
 		}
 
-		return GitlabToGithubConverter.convertCommit(glcommit, gldiffs, users.size() >= 1 ? users.get(0) : null);
+		return GitlabToGithubConverter.convertCommit(glcommit, gldiffs, user);
 	}
 
 	@RequestMapping("/{namespace}/{repo}/events")

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.dkaedv.glghproxy.Utils;
 import com.dkaedv.glghproxy.converter.GitlabToGithubConverter;
 import com.dkaedv.glghproxy.gitlabclient.GitlabSessionProvider;
 
@@ -45,9 +46,10 @@ public class UsersController {
 
 		GitlabAPI api = gitlab.connect(authorization);
 		List<GitlabUser> users = api.findUsers(username);
+		GitlabUser user = Utils.findSingleUser(users, username);
 
-		if (users.size() >= 1) {
-			return new ResponseEntity<User>(GitlabToGithubConverter.convertUser(users.get(0)), HttpStatus.OK);
+		if (user != null) {
+			return new ResponseEntity<User>(GitlabToGithubConverter.convertUser(user), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
 		}
