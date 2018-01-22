@@ -37,6 +37,10 @@ public class Utils {
 			return null;
 		}
 
+		if (users.size() == 1) {
+			return users.get(0);
+		}
+
 //		users.stream().forEach(user -> LOG.warn("check: " + user.getName() + " : " + user.getEmail() + " : " + user.getUsername()));
 		
 		Optional<GitlabUser> result = null;
