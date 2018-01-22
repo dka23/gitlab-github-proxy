@@ -67,6 +67,11 @@
 
 	<repositories>
 		<repository>
+			<id>Nexus</id>
+			<name>Maven Central</name>
+			<url>HTTPS: https://repo1.maven.org/maven2</url>
+		</repository>
+		<repository>
 			<id>egit</id>
 			<name>Eclipse egit</name>
 			<url>https://repo.eclipse.org/content/repositories/egit-releases/</url>

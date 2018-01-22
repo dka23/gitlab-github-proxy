@@ -231,7 +231,7 @@ public class GitlabToGithubConverter {
 		pull.setDiffUrl(htmlUrl + ".diff");
 		pull.setPatchUrl(htmlUrl + ".patch");
 
-//		LOG.info("Converted merge request " + convertToJson(glmr) + " to pull request " + convertToJson(pull));
+		// LOG.info("Converted merge request " + convertToJson(glmr) + " to pull request " + convertToJson(pull));
 
 		return pull;
 	}
@@ -240,7 +240,7 @@ public class GitlabToGithubConverter {
 		if ("can_be_merged".equals(glmr.getMergeStatus())) {
 			pull.setMergeable(true);
 		}
-		
+
 		if (GitlabMergeRequest.STATUS_OPENED.equals(glmr.getState()) || "reopened".equals(glmr.getState())) {
 			pull.setState("open");
 			pull.setMerged(false);
@@ -420,6 +420,9 @@ public class GitlabToGithubConverter {
 		}
 		if ("closed".equals(aState)) {
 			return GitlabMergeRequest.STATUS_CLOSED;
+		}
+		if ("all".equals(aState)) { // for get-merge-requests-with-status api
+			return "all";
 		}
 		throw new RuntimeException("Unknown pull request state: " + aState);
 	}
