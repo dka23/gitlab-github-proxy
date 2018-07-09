@@ -5,7 +5,6 @@ Proxy to provide GitHub-like API on top of Gitlab. Especially designed to use th
 **VERY IMPORTANT CONFIGURATION REQUIREMENTS:**
 
 1. The address of glghproxy on your network MUST be DNS resolvable AND routable from BOTH a) JIRA server, and b) end-user browsers.
-2. Additionally, glghproxy MUST operate on tcp/80.
 
 ## Setup
 
