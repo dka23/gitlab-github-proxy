@@ -6,6 +6,11 @@ Proxy to provide GitHub-like API on top of Gitlab. Especially designed to use th
 
 1. The address of glghproxy on your network MUST be DNS resolvable AND routable from BOTH a) JIRA server, and b) end-user browsers.
 
+2. If you want to access not only the repositories of the configured user but all repositories the user has access to, 
+   you need to set the property -DtreatOrgaAsOwner=true, either in Tomcat's CATALINA_OPTS or on the commandline. This will  
+   encode the full path to the repository into the repository name so that JIRA can display it. This even supports Gitlab's 
+   subgroups, that are not supported via the GitHub API.
+
 ## Setup
 
 ### Step 1. Launch glghproxy using Maven and Spring boot from CLI
