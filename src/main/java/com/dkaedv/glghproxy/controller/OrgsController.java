@@ -43,9 +43,7 @@ public class OrgsController {
 				+ ", per_page="
 				+ per_page
 				+ ", page="
-				+ page
-				+ ", authorization="
-				+ authorization);
+				+ page);
 
 		GitlabAPI api = gitlab.connect(authorization);
 		List<GitlabProject> projects = OwnerFixup.getRepositories(api);
