@@ -9,6 +9,7 @@ import org.gitlab.api.GitlabAPI;
 import org.gitlab.api.models.GitlabProject;
 import org.gitlab.api.models.GitlabUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,9 @@ public class UsersController {
 	@Autowired
 	private GitlabSessionProvider gitlab;
 
+	@Value("${treatOrgaAsOwner}")
+	private Boolean treatOrgaAsOwner;
+	
 	@RequestMapping("/{username}/repos")
 	@ResponseBody
 	public List<Repository> getReposForUser(@PathVariable String username, @RequestParam String per_page,
@@ -37,7 +41,7 @@ public class UsersController {
 		GitlabAPI api = gitlab.connect(authorization);
 		List<GitlabProject> projects = OwnerFixup.getRepositories(api);
 
-		return GitlabToGithubConverter.convertRepositories(projects);
+		return GitlabToGithubConverter.convertRepositories(projects, treatOrgaAsOwner);
 	}
 
 	@RequestMapping("/{username}")

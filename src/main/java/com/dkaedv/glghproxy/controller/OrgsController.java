@@ -49,7 +49,7 @@ public class OrgsController {
 		List<GitlabProject> projects = OwnerFixup.getRepositories(api);
 		LOG.info("GitlabAPI returned projects: " + projects.size());
 
-		List<Repository> repositories = GitlabToGithubConverter.convertRepositories(projects);
+		List<Repository> repositories = GitlabToGithubConverter.convertRepositories(projects, treatOrgaAsOwner);
 		if (Boolean.TRUE.equals(treatOrgaAsOwner)) {
 			setRepositoryOwner(repositories, orgname);
 		}
@@ -57,7 +57,8 @@ public class OrgsController {
 	}
 
 	/**
-	 * Sets the given ownerName as the owner of all repositories.
+	 * Sets the given ownerName as the owner of all repositories. The original "owner"
+	 * (= GitLab namespace) is encoded into the repository name.
 	 * 
 	 * @param repositories
 	 * @param ownerName
@@ -74,7 +75,7 @@ public class OrgsController {
 			}
 			owner.setLogin(ownerName);
 			repository.setOwner(owner);
-			String extendedRepoName = tempOldLogin + OwnerFixup.REPO_NAMESPACE_SEPARATOR + repository.getName();
+			String extendedRepoName = OwnerFixup.encode(tempOldLogin, repository.getName());
 			LOG.info("Setting extended repo name: " + extendedRepoName + " for repo: " + repository.getName());
 			repository.setName(extendedRepoName);
 		}

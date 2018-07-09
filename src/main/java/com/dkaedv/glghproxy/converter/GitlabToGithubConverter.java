@@ -154,7 +154,7 @@ public class GitlabToGithubConverter {
 		}
 	}
 
-	public static Repository convertRepository(GitlabProject project) {
+	public static Repository convertRepository(GitlabProject project, boolean treatOrgaAsOwner) {
 		Repository repo = new Repository();
 
 		repo.setId(project.getId());
@@ -176,18 +176,22 @@ public class GitlabToGithubConverter {
 		User user = new User();
 		GitlabNamespace namespace = project.getNamespace();
 		if (namespace != null) {
-			user.setLogin(namespace.getName());
+			if (treatOrgaAsOwner) {
+				user.setLogin(namespace.getFullPath()); // include subgroups
+			} else {
+				user.setLogin(namespace.getName());
+			}
 		}
 		repo.setOwner(user);
 
 		return repo;
 	}
 
-	public static List<Repository> convertRepositories(List<GitlabProject> projects) {
+	public static List<Repository> convertRepositories(List<GitlabProject> projects, boolean treatOrgaAsOwner) {
 		List<Repository> repos = new ArrayList<>(projects.size());
 
 		for (GitlabProject project : projects) {
-			repos.add(convertRepository(project));
+			repos.add(convertRepository(project, treatOrgaAsOwner));
 		}
 
 		return repos;

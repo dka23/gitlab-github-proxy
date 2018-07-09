@@ -16,13 +16,17 @@ public class OwnerFixup {
 
 	public static final String REPO_NAMESPACE_SEPARATOR = ":";
 
+	private static final String SUBGROUP_SEPARATOR = "/";
+
 	private OwnerFixup() {}
 
 	public static final String fixupNamespace(String namespaceAndRepo, Boolean treatOrgaAsOwner) {
 		if (FIXUP_ENABLED && Boolean.TRUE.equals(treatOrgaAsOwner)) {
 			String[] tempSplit = namespaceAndRepo.split(REPO_NAMESPACE_SEPARATOR);
-			if (tempSplit.length >= 2) {
-				return tempSplit[0]; // return the actual namespace
+			int tempIndex = namespaceAndRepo.lastIndexOf(REPO_NAMESPACE_SEPARATOR);
+			if (tempIndex > 0) {
+				String tempResult = namespaceAndRepo.substring(0, tempIndex); // return the actual namespace
+				return tempResult.replaceAll(REPO_NAMESPACE_SEPARATOR, SUBGROUP_SEPARATOR);
 			}
 			LOG.warn("Unable to fix up namespace, does not contain expected separator: " + namespaceAndRepo);
 		}
@@ -33,13 +37,17 @@ public class OwnerFixup {
 		if (FIXUP_ENABLED && Boolean.TRUE.equals(treatOrgaAsOwner)) {
 			String[] tempSplit = namespaceAndRepo.split(REPO_NAMESPACE_SEPARATOR);
 			if (tempSplit.length >= 2) {
-				return tempSplit[1]; // return the actual repo
+				return tempSplit[tempSplit.length - 1]; // return the actual repo
 			}
 			LOG.warn("Unable to fix up namespace, does not contain expected separator: " + namespaceAndRepo);
 		}
 		return namespaceAndRepo;
 	}
 
+	public static final String encode(String namespace, String repoName) {
+		return namespace.replaceAll(SUBGROUP_SEPARATOR, REPO_NAMESPACE_SEPARATOR) + REPO_NAMESPACE_SEPARATOR + repoName;
+	}
+	
 	public static final List<GitlabProject> getRepositories(GitlabAPI api) throws IOException {
 //		return api.getAllProjects(); // only works with elevated permissions
 		return api.getProjects();
