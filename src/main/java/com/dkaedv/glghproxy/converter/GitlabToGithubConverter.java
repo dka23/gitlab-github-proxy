@@ -158,7 +158,7 @@ public class GitlabToGithubConverter {
 		Repository repo = new Repository();
 
 		repo.setId(project.getId());
-		repo.setName(project.getName());
+		repo.setName(project.getPath()); // note: use the path, not the friendly name that we cannot use path to the API
 		repo.setDescription(project.getDescription());
 		repo.setGitUrl(project.getHttpUrl());
 		repo.setHtmlUrl(project.getWebUrl());
