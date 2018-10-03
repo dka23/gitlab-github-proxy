@@ -206,7 +206,7 @@ public class GitlabToGithubConverter {
 	}
 
 	private static void convertMergeRequestState(PullRequest pull, GitlabMergeRequest glmr) {
-		if ("opened".equals(glmr.getState())) {
+		if ("opened".equals(glmr.getState()) || "reopened".equals(glmr.getState())) {
 			pull.setState("open");
 			pull.setMerged(false);
 		} else if ("closed".equals(glmr.getState())) {
