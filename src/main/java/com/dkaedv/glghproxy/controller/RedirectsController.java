@@ -57,4 +57,23 @@ public class RedirectsController {
 		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo + "/tree/" + branch;
 	}
 
+	@RequestMapping("/{namespace}/{repo}/compare")
+	public String compare(
+			@PathVariable String namespace,
+			@PathVariable String repo
+			) {
+
+		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo + "/compare";
+	}
+
+	@RequestMapping("/{namespace}/{repo}/compare/{spec}")
+	public String compare(
+			@PathVariable String namespace,
+			@PathVariable String repo,
+			@PathVariable String spec
+			) {
+
+		return "redirect:" + gitlabUrl + "/" + namespace + "/" + repo + "/compare/" + spec;
+	}
+
 }
