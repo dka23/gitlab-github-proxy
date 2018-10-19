@@ -33,9 +33,9 @@
             <scope>provided</scope>
         </dependency>
 		<dependency>
-		    <groupId>com.github.GEBIT</groupId>
+		    <groupId>org.gitlab</groupId>
 		    <artifactId>java-gitlab-api</artifactId>
-		    <version>4.0.3-gebit</version>
+		    <version>4.1.0</version>
 		</dependency>
 
 		<dependency>

@@ -130,7 +130,7 @@ public class ReposController {
 		GitlabAPI api = gitlab.connect(authorization);
 		List<GitlabMergeRequest> glmergerequests = api.getMergeRequestsWithStatus(namespace + "/" + repo, GitlabToGithubConverter.translatePrStateToMrStatus(state));
 		Map<Integer,GitlabUser> userCache = new HashMap<Integer, GitlabUser>();
-		
+
 		List<PullRequest> mergeRequests = GitlabToGithubConverter.convertMergeRequests(glmergerequests,
 				gitlabUrl,
 				namespace,
@@ -235,10 +235,12 @@ public class ReposController {
 		GitlabProjectHook createdHook = api.addProjectHook(namespace + "/" + repo,
 				hook.getConfig().get("url"),
 				hook.getEvents().contains("push"),
-				false,
+				false, // no issue events
 				hook.getEvents().contains("pull_request"),
+				false, // no note events
 				hook.getEvents().contains("push"), // there's no differentiation for tag-pushes in the github API
-				Constants.STRICT_SSL);
+				Constants.STRICT_SSL,
+				null);
 
 		return GitlabToGithubConverter.convertHook(createdHook);
 	}
