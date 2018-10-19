@@ -22,7 +22,7 @@ You can choose to setup a port forward in front of it,
 or (not recommended) run the service as root so you can listen on tcp/80.
 
 ```bash
-mvn spring-boot:run -DgitlabUrl="http://yourgitlabserver.yourcompany.com" -Dserver.port=8080
+mvn spring-boot:run -DgitlabUrl="http://yourgitlabserver.yourcompany.com" -Dserver.port=8080 -DtreatOrgaAsOwner=true
 ```
 
 Alternatively, you can launch using Docker, and its resident service will proxy tcp/80 -> tcp/8080 for you:

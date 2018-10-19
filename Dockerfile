@@ -25,4 +25,4 @@ USER app
 EXPOSE 8080
 
 # start with spring boot
-CMD apache-maven-3.3.9/bin/mvn spring-boot:run -DgitlabUrl="$GITLAB_URL"
+CMD apache-maven-3.3.9/bin/mvn spring-boot:run -DgitlabUrl="$GITLAB_URL" -DtreatOrgaAsOwner="$TREAT_ORGA_AS_OWNER"
