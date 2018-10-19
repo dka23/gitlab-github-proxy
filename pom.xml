@@ -75,14 +75,10 @@
 			<name>Eclipse egit</name>
 			<url>https://repo.eclipse.org/content/repositories/egit-releases/</url>
 		</repository>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
 	</repositories>
 	<scm>
-		<connection>scm:git:https://github.com/GEBIT/gitlab-github-proxy.git</connection>
-		<url>https://github.com/GEBIT/gitlab-github-proxy.git</url>
-	  <tag>glghproxy-0.3.0</tag>
-  </scm>
+		<connection>scm:git:ssh://git@github.com/GEBIT/gitlab-github-proxy.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/GEBIT/gitlab-github-proxy.git</developerConnection>
+		<url>https://github.com/GEBIT/gitlab-github-proxy</url>
+	</scm>
 </project>
