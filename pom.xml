@@ -20,7 +20,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<tomcat.version>8.0.45</tomcat.version>
 	</properties>
 
 	<dependencies>
@@ -34,10 +33,11 @@
             <scope>provided</scope>
         </dependency>
 		<dependency>
-			<groupId>de.gebit</groupId>
-			<artifactId>java-gitlab-api</artifactId>
-			<version>4.0.3</version>
+		    <groupId>com.github.GEBIT</groupId>
+		    <artifactId>java-gitlab-api</artifactId>
+		    <version>4.0.3-gebit</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.eclipse.mylyn.github</groupId>
 			<artifactId>org.eclipse.egit.github.core</artifactId>
@@ -74,6 +74,10 @@
 			<id>egit</id>
 			<name>Eclipse egit</name>
 			<url>https://repo.eclipse.org/content/repositories/egit-releases/</url>
+		</repository>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 	<scm>
