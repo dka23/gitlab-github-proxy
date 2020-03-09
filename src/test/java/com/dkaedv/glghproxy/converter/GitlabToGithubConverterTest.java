@@ -1,11 +1,15 @@
 package com.dkaedv.glghproxy.converter;
 
 import org.eclipse.egit.github.core.PullRequest;
+import org.eclipse.egit.github.core.RepositoryCommit;
+import org.gitlab.api.models.GitlabCommit;
 import org.gitlab.api.models.GitlabMergeRequest;
 import org.gitlab.api.models.GitlabUser;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+
+import java.util.Collections;
 
 public class GitlabToGithubConverterTest {
 
@@ -44,5 +48,17 @@ public class GitlabToGithubConverterTest {
 		
 		assertEquals("hanswurscht@test.com", pull.getMergedBy().getEmail());
 		
+	}
+
+	@Test
+	public void shouldConvertEmptyCommitToEmptyFileList() {
+		GitlabCommit commit = new GitlabCommit();
+		GitlabUser user = new GitlabUser();
+		user.setEmail("hanswurscht@test.com");
+		user.setUsername("hanswurscht");
+		user.setId(5);
+		RepositoryCommit ghCommit = GitlabToGithubConverter.convertCommit(commit, Collections.emptyList(), user);
+		assertNotNull(ghCommit.getFiles());
+		assertEquals(0, ghCommit.getFiles().size());
 	}
 }

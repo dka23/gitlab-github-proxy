@@ -104,6 +104,8 @@ public class GitlabToGithubConverter {
 				convertCommitFile(files, diff);
 			}
 			repoCommit.setFiles(files);
+		} else {
+			repoCommit.setFiles(new ArrayList<>()); // must set empty collection, other DVCS connector fails
 		}
 
 		return repoCommit;

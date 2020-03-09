@@ -40,7 +40,7 @@ public class Application extends SpringBootServletInitializer {
 		builder
 			.indentOutput(true)
 			.simpleDateFormat(GITHUB_DATE_FORMAT)
-			.serializationInclusion(Include.NON_EMPTY)
+			.serializationInclusion(Include.NON_NULL) // include empty collections; JIRA does not like commtis without files
 			.propertyNamingStrategy(new PropertyNamingStrategy.SnakeCaseStrategy());
 		
 		return builder;
