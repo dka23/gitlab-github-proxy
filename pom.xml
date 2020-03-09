@@ -4,7 +4,7 @@
 
 	<groupId>com.dkaedv</groupId>
 	<artifactId>glghproxy</artifactId>
-	<version>0.5.1-SNAPSHOT</version>
+	<version>0.5.1</version>
 	<packaging>war</packaging>
 
 	<name>glghproxy</name>
@@ -80,6 +80,6 @@
 		<connection>scm:git:ssh://git@github.com/GEBIT/gitlab-github-proxy.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/GEBIT/gitlab-github-proxy.git</developerConnection>
 		<url>https://github.com/GEBIT/gitlab-github-proxy</url>
-	  <tag>HEAD</tag>
+	  <tag>glghproxy-0.5.1</tag>
   </scm>
 </project>
